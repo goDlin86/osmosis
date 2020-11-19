@@ -12,6 +12,13 @@
 		D46FFD98255D76E5003681A0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D46FFD97255D76E5003681A0 /* Assets.xcassets */; };
 		D46FFD9B255D76E5003681A0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D46FFD9A255D76E5003681A0 /* Preview Assets.xcassets */; };
 		D46FFD9E255D76E5003681A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D46FFD9C255D76E5003681A0 /* Main.storyboard */; };
+		D46FFDA8255D7806003681A0 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46FFDA7255D7805003681A0 /* Card.swift */; };
+		D46FFDAB255D8807003681A0 /* CardDesigns.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46FFDAA255D8807003681A0 /* CardDesigns.swift */; };
+		D46FFDAE255D89F8003681A0 /* SuitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46FFDAD255D89F8003681A0 /* SuitView.swift */; };
+		D46FFDB1255D961D003681A0 /* DeckAndStockPile.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46FFDB0255D961D003681A0 /* DeckAndStockPile.swift */; };
+		D46FFDB4255DAD06003681A0 /* Tableau.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46FFDB3255DAD06003681A0 /* Tableau.swift */; };
+		D48FD7BE255E3B5D00FADCDA /* Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48FD7BD255E3B5D00FADCDA /* Foundation.swift */; };
+		D48FD7C1255E3DF300FADCDA /* RowCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48FD7C0255E3DF300FADCDA /* RowCardsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +30,13 @@
 		D46FFD9D255D76E5003681A0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D46FFD9F255D76E5003681A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D46FFDA0255D76E5003681A0 /* Osmosis.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Osmosis.entitlements; sourceTree = "<group>"; };
+		D46FFDA7255D7805003681A0 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		D46FFDAA255D8807003681A0 /* CardDesigns.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardDesigns.swift; sourceTree = "<group>"; };
+		D46FFDAD255D89F8003681A0 /* SuitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuitView.swift; sourceTree = "<group>"; };
+		D46FFDB0255D961D003681A0 /* DeckAndStockPile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckAndStockPile.swift; sourceTree = "<group>"; };
+		D46FFDB3255DAD06003681A0 /* Tableau.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tableau.swift; sourceTree = "<group>"; };
+		D48FD7BD255E3B5D00FADCDA /* Foundation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foundation.swift; sourceTree = "<group>"; };
+		D48FD7C0255E3DF300FADCDA /* RowCardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowCardsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +76,13 @@
 				D46FFD9F255D76E5003681A0 /* Info.plist */,
 				D46FFDA0255D76E5003681A0 /* Osmosis.entitlements */,
 				D46FFD99255D76E5003681A0 /* Preview Content */,
+				D46FFDA7255D7805003681A0 /* Card.swift */,
+				D46FFDAA255D8807003681A0 /* CardDesigns.swift */,
+				D46FFDAD255D89F8003681A0 /* SuitView.swift */,
+				D46FFDB0255D961D003681A0 /* DeckAndStockPile.swift */,
+				D46FFDB3255DAD06003681A0 /* Tableau.swift */,
+				D48FD7BD255E3B5D00FADCDA /* Foundation.swift */,
+				D48FD7C0255E3DF300FADCDA /* RowCardsView.swift */,
 			);
 			path = Osmosis;
 			sourceTree = "<group>";
@@ -145,7 +166,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				D46FFD96255D76E0003681A0 /* ContentView.swift in Sources */,
+				D46FFDA8255D7806003681A0 /* Card.swift in Sources */,
+				D48FD7BE255E3B5D00FADCDA /* Foundation.swift in Sources */,
+				D46FFDB4255DAD06003681A0 /* Tableau.swift in Sources */,
+				D48FD7C1255E3DF300FADCDA /* RowCardsView.swift in Sources */,
 				D46FFD94255D76E0003681A0 /* AppDelegate.swift in Sources */,
+				D46FFDB1255D961D003681A0 /* DeckAndStockPile.swift in Sources */,
+				D46FFDAB255D8807003681A0 /* CardDesigns.swift in Sources */,
+				D46FFDAE255D89F8003681A0 /* SuitView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
