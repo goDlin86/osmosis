@@ -10,6 +10,12 @@ import SwiftUI
 struct Card: Equatable {
     var value: Int
     var suit: Suit
+    var flipState: FlipState = .faceDown
+    var cardState: CardState = .deck
+    var allowTap: Bool = true
+    var offset: CGSize = .zero
+    var zIndex: Double = 0
+    var rowIndex: Int? // for tableau and foundation
     
     init (value: Int, suit: Suit) {
         self.value = value
@@ -19,17 +25,6 @@ struct Card: Equatable {
     
     static func == (lhs: Card, rhs: Card) -> Bool {
         return lhs.value == rhs.value && lhs.suit == rhs.suit
-    }
-    
-    func findTableauIndex(tableau: Tableau) -> (column: Int, row: Int)? {
-        for i in 0..<tableau.cards.count {
-            for j in 0..<tableau.cards[i].count {
-                if tableau.cards[i][j] == self {
-                    return (i, j)
-                }
-            }
-        }
-        return nil
     }
 }
 
@@ -85,41 +80,44 @@ enum DragState {
 struct CardView: View, Identifiable {
     var card: Card
     var id = UUID()
-    @State var flipState: FlipState? = .faceDown
+    var width: CGFloat = 100
+    var height: CGFloat = 150
+    //@State var flipState: FlipState? = .faceDown
     @State var dragAmount = CGSize.zero
     @State var dragState = DragState.unknown
-    @State var cardState: CardState
+    //@State var cardState: CardState
     var onChanged: ((CGPoint, Card) -> DragState)?
     var onEnded: ((CGPoint, Card) -> Void)?
     
     @EnvironmentObject var deck: Deck
-    @EnvironmentObject var stockPile: StockPile
-    @EnvironmentObject var foundation: Foundation
-    @EnvironmentObject var tableau: Tableau
+//    @EnvironmentObject var stockPile: StockPile
+//    @EnvironmentObject var foundation: Foundation
+//    @EnvironmentObject var tableau: Tableau
     
     @State private var opacity = 1.0
     
     var body: some View {
         ZStack {
             CardBack()
-                .rotation3DEffect(.degrees(flipState == .faceDown ? 0 : 180), axis: (x: 0, y: 1, z: 0))
-                .opacity(flipState == .faceDown ? 1 : 0)
-            CardFront(value: self.card.value, suit: self.card.suit)
-                .rotation3DEffect(.degrees(flipState != .faceDown ? 0 : -180), axis: (x: 0, y: 1, z: 0))
-                .opacity(flipState != .faceDown ? 1 : 0)
+                .rotation3DEffect(.degrees(card.flipState == .faceDown ? 0 : 180), axis: (x: 0, y: 1, z: 0))
+                .opacity(card.flipState == .faceDown ? 1 : 0)
+            CardFront(value: card.value, suit: card.suit)
+                .rotation3DEffect(.degrees(card.flipState != .faceDown ? 0 : -180), axis: (x: 0, y: 1, z: 0))
+                .opacity(card.flipState != .faceDown ? 1 : 0)
                 .overlay(dragColor)
         }
-            .frame(width: 102, height: 150)
+            .frame(width: width, height: height)
             .shadow(color: Color.clear, radius: 0)
             .shadow(color: Color.blue, radius: 0)
-            .zIndex(dragAmount == .zero ? 0 : Double.greatestFiniteMagnitude)
-            .offset(dragAmount)
+            .zIndex(dragAmount == .zero ? card.zIndex : Double.greatestFiniteMagnitude)
+            .offset(dragAmount == .zero ? card.offset : dragAmount)
             .opacity(self.opacity)
+            .allowsHitTesting(card.allowTap)
             .simultaneousGesture (
                 DragGesture(coordinateSpace: .global)
                     .onChanged {
-                        if self.flipState == .faceUp && (self.cardState == .tableau || self.cardState == .stockPile) {
-                            self.dragAmount = CGSize(width: $0.translation.width, height: -$0.translation.height)
+                        if self.card.flipState == .faceUp && (self.card.cardState == .tableau || self.card.cardState == .stockPile) {
+                            self.dragAmount = CGSize(width: $0.translation.width + self.card.offset.width, height: -$0.translation.height + self.card.offset.height)
                             self.dragState = self.onChanged?($0.location, self.card) ?? .unknown
 //                            if let index = self.card.findTableauIndex(tableau: self.tableau) {
 //                                self.tableau.activeRow = index.column
@@ -129,22 +127,22 @@ struct CardView: View, Identifiable {
                     .onEnded {
                         if self.dragState == .good {
                             self.onEnded?($0.location, self.card)
-                            if let index = self.card.findTableauIndex(tableau: self.tableau) {
-                                self.cardState = .foundation
-                                self.foundation.addToPile(card: self.tableau.cards[index.column].popLast()!)
-                                self.tableau.printCards()
-                                self.opacity = 0
-                                //self.tableau.cards[index.column].last.flip()
-                            } else {
-                                self.cardState = .foundation
-                                self.foundation.addToPile(card: self.stockPile.cards.popLast()!)
-                                self.opacity = 0
-                            }
+//                            if let index = self.card.findTableauIndex(tableau: self.tableau) {
+//                                self.cardState = .foundation
+//                                self.foundation.addToPile(card: self.tableau.cards[index.column].popLast()!)
+//                                self.tableau.printCards()
+//                                self.opacity = 0
+//                                //self.tableau.cards[index.column].last.flip()
+//                            } else {
+//                                self.cardState = .foundation
+//                                self.foundation.addToPile(card: self.stockPile.cards.popLast()!)
+//                                self.opacity = 0
+//                            }
                             
                             //check victory
-                            if self.foundation.rows[3].cards.count == 13 {
-                                print("VICTORY")
-                            }
+//                            if self.foundation.rows[3].cards.count == 13 {
+//                                print("VICTORY")
+//                            }
                         }
                         withAnimation {
                             self.dragAmount = .zero
@@ -155,23 +153,18 @@ struct CardView: View, Identifiable {
                 TapGesture()
                     .onEnded {
                         withAnimation {
-                            switch self.cardState {
+                            switch self.card.cardState {
                             case .tableau:
                                 withAnimation {
-                                    if self.flipState == .faceDown {
-                                        self.flip()
+                                    if self.card.flipState == .faceDown {
+                                        self.deck.flip(card: self.card)
                                     }
                                 }
                                 return
                             case .deck:
                                 withAnimation {
-                                    if self.flipState == .faceDown && self.deck.cards.last == self.card {
-                                        for _ in 0..<3 {
-                                            if let c = self.deck.cards.popLast() {
-                                            self.stockPile.cards.append(c)
-                                            }
-                                        }
-                                        
+                                    if self.card.flipState == .faceDown {
+                                        self.deck.moveTopToStockPile()
                                     }
                                 }
                                 return
@@ -209,11 +202,7 @@ struct CardView: View, Identifiable {
                     }
             )
     }
-        
-    func flip() {
-        self.flipState = self.flipState == .faceUp ? .faceDown : .faceUp
-    }
-    
+           
     var dragColor: Color {
         if self.dragState == .unknown || self.dragAmount == .zero {
             return Color.clear//blue.opacity(0.5)
@@ -314,6 +303,6 @@ extension Color {
 
 struct Card_Previews: PreviewProvider {
     static var previews: some View {
-        CardView(card: Card(value: 4, suit: .heart), flipState: .faceUp, cardState: .deck)
+        CardView(card: Card(value: 4, suit: .heart), width: 100, height: 150)
     }
 }

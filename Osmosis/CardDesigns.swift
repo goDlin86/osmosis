@@ -395,6 +395,6 @@ private struct Joker: View {
 
 struct CardDesigns_Previews: PreviewProvider {
     static var previews: some View {
-        CardView(card: Card(value: 10, suit: .heart), flipState: .faceUp, cardState: .deck)
+        CardView(card: Card(value: 10, suit: .heart), width: 100, height: 150)
     }
 }

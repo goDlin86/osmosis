@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  Osmosis
 //
-//  Created by Денис on 12.11.2020.
+//  Created by Денис on 20.11.2020.
 //
 
 import SwiftUI
@@ -29,71 +29,94 @@ struct PlaceHolder: View {
 
 struct ContentView: View {
     @EnvironmentObject var deck: Deck
-    @EnvironmentObject var stockPile: StockPile
-    @EnvironmentObject var foundation: Foundation
-    @EnvironmentObject var tableau: Tableau
+    
+    let cardWidth: CGFloat = 100
+    let cardHeight: CGFloat = 150
     
     var body: some View {
         ZStack {
-            VStack (spacing: 20) {
-                HStack {
-                    DeckAndStockPileView()
-                    Spacer()
-                    Text("RESTART")
-                        .font(.largeTitle)
-                        .onTapGesture {
-                            self.tableau.cards = Array(repeating: [Card](), count: 4)
-                            self.foundation.rows = Array(repeating: RowFoundation(cards: []), count: 4)
-                            self.stockPile.cards.removeAll()
-                            self.deck.reset()
-                            
-                            self.startGame()
-                        }
-                }.zIndex(2)
-                HStack (spacing: 20) {
-                    TableauView()
-                    FoundationView().zIndex(-1)
-                }
+            PlaceHolder(suit: "􀅈")
+            ForEach(0..<4) { i in
+                PlaceHolder().offset(getOffset(type: .tableau, row: i))
+                PlaceHolder().offset(getOffset(type: .foundation, row: i))
+            }
+         
+            ForEach(0..<deck.cards.count, id: \.self) { i in
+                CardView(
+                    card: self.deck.cards[i],
+                    width: cardWidth,
+                    height: cardHeight
+                )
             }
         }
-        .padding(20)
-        .onAppear(perform: self.startGame)
+        .position(x: cardWidth/2 + 30 , y: cardHeight/2 + 30)
+        .frame(width: cardWidth*9, height: cardHeight*5 + 60  + 65)
+        .onAppear { self.startGame() }
+    }
+    
+    func getOffset(type: CardState, row: Int = 0, index: Int = 0) -> CGSize {
+        switch type {
+        case .deck:
+            return .zero
+            
+        case .stockPile:
+            let offset = CGSize(width: cardWidth + 30, height: 0)
+            return offset
+
+       case .tableau:
+            let offset = CGSize(
+                width: CGFloat(index) * (cardWidth - 80),
+                height: cardHeight + 20 + CGFloat(row) * (cardHeight + 15)
+            )
+            return offset
+
+       case .foundation:
+            let offset = CGSize(
+                width: (cardWidth - 80) * 3 + cardWidth + 60 + CGFloat(index) * (cardWidth - 70),
+                height: cardHeight + 20 + CGFloat(row) * (cardHeight + 15)
+            )
+            return offset
+       }
     }
     
     func startGame() {
-        for i in 0..<4 {
-            for _ in 0..<4 {
-                self.tableau.cards[i].append(self.deck.cards.popLast()!)
+        for j in 0..<4 {
+            for i in 0..<4 {
+                topCardToTableau(row: j, i: i)
             }
         }
-        self.tableau.printCards()
-        
-        self.foundation.addToPile(card: self.deck.cards.popLast()!)
+
+        if let index = deck.cards.lastIndex(where: { $0.cardState == .deck }) {
+            cardToFoundation(index: index, row: 0, zindex: 0)
+        }
+    }
+    
+    func topCardToTableau(row: Int, i: Int) {
+        if let index = deck.cards.lastIndex(where: { $0.cardState == .deck }) {
+            deck.cards[index].cardState = .tableau
+            deck.cards[index].flipState = i == 3 ? .faceUp : .faceDown
+            deck.cards[index].allowTap = i < 3 ? false : true
+            deck.cards[index].offset = getOffset(type: .tableau, row: row, index: i)
+            deck.cards[index].zIndex = Double(i)
+            deck.cards[index].rowIndex = row
+        }
+    }
+   
+    func cardToFoundation(index: Int, row: Int, zindex: Double) {
+        deck.cards[index].cardState = .foundation
+        deck.cards[index].flipState = .faceUp
+        deck.cards[index].allowTap = false
+        deck.cards[index].offset = getOffset(type: .foundation, row: row)
+        deck.cards[index].zIndex = zindex
+        deck.cards[index].rowIndex = row
     }
 }
 
-
-struct ContentView_Previews: PreviewProvider {
+struct ContentView1_Previews: PreviewProvider {
+    static let deck = Deck()
+    
     static var previews: some View {
-        PlaceHolder()
-    }
-}
-
-
-extension View {
-    func stacked(at position: Int, in total: Int, by distance: CGFloat, horizontal: Bool = false) -> some View {
-        let offset: CGFloat
-        if horizontal {
-            if total - position <= 3 {
-                offset = CGFloat(total - position)
-                return self.offset(CGSize(width: -offset * distance, height: offset * 3 - CGFloat(total) * 3))
-            } else {
-                offset = CGFloat(total - position)
-                return self.offset(CGSize(width: -3 * distance, height: offset * 3 - CGFloat(total) * 3))
-            }
-        } else {
-            offset = CGFloat(total - position)
-            return self.offset(CGSize(width: 0, height: offset * distance - CGFloat(total) * distance))
-        }
+        ContentView()
+            .environmentObject(deck)
     }
 }
