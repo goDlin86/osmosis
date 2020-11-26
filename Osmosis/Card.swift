@@ -82,17 +82,13 @@ struct CardView: View, Identifiable {
     var id = UUID()
     var width: CGFloat = 100
     var height: CGFloat = 150
-    //@State var flipState: FlipState? = .faceDown
+    
     @State var dragAmount = CGSize.zero
     @State var dragState = DragState.unknown
-    //@State var cardState: CardState
     var onChanged: ((CGPoint, Card) -> DragState)?
     var onEnded: ((CGPoint, Card) -> Void)?
     
     @EnvironmentObject var deck: Deck
-//    @EnvironmentObject var stockPile: StockPile
-//    @EnvironmentObject var foundation: Foundation
-//    @EnvironmentObject var tableau: Tableau
     
     @State private var opacity = 1.0
     
@@ -119,30 +115,11 @@ struct CardView: View, Identifiable {
                         if self.card.flipState == .faceUp && (self.card.cardState == .tableau || self.card.cardState == .stockPile) {
                             self.dragAmount = CGSize(width: $0.translation.width + self.card.offset.width, height: -$0.translation.height + self.card.offset.height)
                             self.dragState = self.onChanged?($0.location, self.card) ?? .unknown
-//                            if let index = self.card.findTableauIndex(tableau: self.tableau) {
-//                                self.tableau.activeRow = index.column
-//                            }
                         }
                     }
                     .onEnded {
                         if self.dragState == .good {
                             self.onEnded?($0.location, self.card)
-//                            if let index = self.card.findTableauIndex(tableau: self.tableau) {
-//                                self.cardState = .foundation
-//                                self.foundation.addToPile(card: self.tableau.cards[index.column].popLast()!)
-//                                self.tableau.printCards()
-//                                self.opacity = 0
-//                                //self.tableau.cards[index.column].last.flip()
-//                            } else {
-//                                self.cardState = .foundation
-//                                self.foundation.addToPile(card: self.stockPile.cards.popLast()!)
-//                                self.opacity = 0
-//                            }
-                            
-                            //check victory
-//                            if self.foundation.rows[3].cards.count == 13 {
-//                                print("VICTORY")
-//                            }
                         }
                         withAnimation {
                             self.dragAmount = .zero
@@ -170,28 +147,7 @@ struct CardView: View, Identifiable {
                                 return
                             case .stockPile:
                                 withAnimation {
-                                    switch self.card.suit {
-                                    case .club:
-    //                                    if (self.foundation.clubs.last ?? Card(value: 0, suit: .club)).value == self.card.value - 1 {
-    //                                        self.foundation.clubs.append(self.stockPile.cards.popLast()!)
-    //                                    }
-                                        return
-                                    case .heart:
-    //                                    if (self.foundation.hearts.last ?? Card(value: 0, suit: .heart)).value == self.card.value - 1 {
-    //                                        self.foundation.hearts.append(self.stockPile.cards.popLast()!)
-    //                                    }
-                                        return
-                                    case .spade:
-    //                                    if (self.foundation.spades.last ?? Card(value: 0, suit: .spade)).value == self.card.value - 1 {
-    //                                        self.foundation.spades.append(self.stockPile.cards.popLast()!)
-    //                                    }
-                                        return
-                                    case .diamond:
-    //                                    if (self.foundation.diamonds.last ?? Card(value: 0, suit: .diamond)).value == self.card.value - 1 {
-    //                                        self.foundation.diamonds.append(self.stockPile.cards.popLast()!)
-    //                                    }
-                                        return
-                                    }
+                                    return
                                 }
                             case .foundation:
                                 withAnimation {
