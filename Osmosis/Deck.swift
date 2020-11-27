@@ -55,6 +55,16 @@ class Deck: ObservableObject {
         print("\(cards.count) cards created")
     }
     
+    func resetGame() {
+        for i in 0..<cards.count {
+            applyCard(
+                index: i,
+                allowTap: true
+            )
+        }
+        cards.shuffle()
+    }
+    
     func flip(card: Card) {
         if let index = cards.firstIndex(of: card) {
             cards[index].flipState = cards[index].flipState == .faceUp ? .faceDown : .faceUp

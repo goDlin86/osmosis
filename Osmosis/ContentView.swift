@@ -35,6 +35,13 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
+            Text("RESTART")
+                .font(.largeTitle)
+                .offset(x: 450, y: 10)
+                .onTapGesture {
+                    self.deck.resetGame()
+                    self.startGame()
+                }
             PlaceHolder(suit: "􀅈")
                 .contentShape(Rectangle())
                 .onTapGesture {
